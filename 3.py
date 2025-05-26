@@ -1,35 +1,61 @@
 import random
+import json
 import string
-from pathlib import Path
 
 
-def generate_random_filename(length=8):
-    """Генерирует случайное имя файла из букв и цифр заданной длины."""
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for _ in range(length)) + '.txt'
+def generate_random_name():
+    """Генерирует случайное имя и фамилию."""
+    first_names = ["John", "Jane", "Alex", "Emily", "Michael", "Sarah", "David", "Emma"]
+    last_names = ["Doe", "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller"]
+    return f"{random.choice(first_names)} {random.choice(last_names)}"
 
 
-def create_random_files(directory, count=10):
-    """Создает указанное количество файлов со случайными именами в заданной директории."""
-    directory_path = Path(directory)
-    directory_path.mkdir(parents=True, exist_ok=True)  # Создаем директорию, если её нет
-
-    created_files = []
-    for _ in range(count):
-        filename = generate_random_filename()
-        file_path = directory_path / filename
-        file_path.touch()  # Создаем пустой файл
-        created_files.append(file_path)
-
-    return created_files
+def generate_random_email(name):
+    """Генерирует email на основе имени."""
+    first, last = name.lower().split()
+    domains = ["gmail.com", "yahoo.com", "example.com", "outlook.com", "hotmail.com"]
+    return f"{first}.{last}@{random.choice(domains)}"
 
 
-# Укажите путь к директории, где нужно создать файлы
-target_directory = "random_files"
+def generate_random_password(length=12):
+    """Генерирует случайный пароль из букв, цифр и знаков препинания."""
+    chars = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(chars) for _ in range(length))
 
-# Создаем файлы и получаем список путей
-files = create_random_files(target_directory)
 
-# Выводим абсолютные пути созданных файлов
-for file in files:
-    print(file.absolute())
+def generate_user_data():
+    """Создает словарь с данными пользователя."""
+    name = generate_random_name()
+    age = random.randint(18, 80)
+    email = generate_random_email(name)
+    password = generate_random_password()
+
+    return {
+        "name": name,
+        "age": age,
+        "email": email,
+        "password": password
+    }
+
+
+def save_to_json(data, filename="user_data.json"):
+    """Сохраняет данные в JSON-файл."""
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=4)
+
+
+def load_from_json(filename="user_data.json"):
+    """Читает данные из JSON-файла."""
+    with open(filename, 'r') as f:
+        return json.load(f)
+
+
+# Генерируем данные пользователя
+user_data = generate_user_data()
+
+# Сохраняем в файл
+save_to_json(user_data)
+
+# Читаем из файла и выводим
+loaded_data = load_from_json()
+print(json.dumps(loaded_data, indent=4))
