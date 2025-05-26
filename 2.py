@@ -1,35 +1,29 @@
 import random
-import string
-from pathlib import Path
+import math
+import statistics
 
 
-def generate_random_filename(length=8):
-    """Генерирует случайное имя файла из букв и цифр заданной длины."""
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for _ in range(length)) + '.txt'
+def generate_random_numbers(count=100, min_val=1, max_val=100):
+    """Генерирует список случайных чисел в заданном диапазоне."""
+    return [random.randint(min_val, max_val) for _ in range(count)]
 
 
-def create_random_files(directory, count=10):
-    """Создает указанное количество файлов со случайными именами в заданной директории."""
-    directory_path = Path(directory)
-    directory_path.mkdir(parents=True, exist_ok=True)  # Создаем директорию, если её нет
+def calculate_stats(numbers):
+    """Вычисляет статистические показатели списка чисел."""
+    mean = statistics.mean(numbers)  # Среднее арифметическое
+    median = statistics.median(numbers)  # Медиана
+    stdev = statistics.stdev(numbers)  # Стандартное отклонение (для выборки)
+    sqrt_sum = math.sqrt(sum(numbers))  # Квадратный корень из суммы
+    sqrt_sum_rounded = round(sqrt_sum, 2)  # Округление до 2 знаков
 
-    created_files = []
-    for _ in range(count):
-        filename = generate_random_filename()
-        file_path = directory_path / filename
-        file_path.touch()  # Создаем пустой файл
-        created_files.append(file_path)
-
-    return created_files
+    return mean, median, stdev, sqrt_sum_rounded
 
 
-# Укажите путь к директории, где нужно создать файлы
-target_directory = "random_files"
+# Генерируем список из 100 случайных чисел
+numbers = generate_random_numbers()
 
-# Создаем файлы и получаем список путей
-files = create_random_files(target_directory)
+# Вычисляем статистику
+mean, median, stdev, sqrt_sum = calculate_stats(numbers)
 
-# Выводим абсолютные пути созданных файлов
-for file in files:
-    print(file.absolute())
+# Выводим результаты
+print(f"Среднее: {mean:.2f}, Медиана: {median}, Стандартное отклонение: {stdev:.2f}, Корень из суммы: {sqrt_sum}")
